@@ -23,17 +23,22 @@ on:
 
 jobs:
   format-pr:
-    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
 
       - name: Add chore prefix to PR title
         uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const context = JSON.parse('{{ toJson github }}');
             const prTitle = context.payload.pull_request.title;
             const newTitle = `chore: ${prTitle}`;
             await github.pulls.update({
