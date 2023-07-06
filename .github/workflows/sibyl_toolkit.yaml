@@ -22,6 +22,7 @@ on:
 
 jobs:
   format:
+    permissions: write-all
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
@@ -34,8 +35,8 @@ jobs:
           NEW_PR_TITLE=$(echo $PR_TITLE | sed -e 's/^/chore: /')
           echo "New PR title: $NEW_PR_TITLE"
           gh pr edit "$PR_NUMBER" --title "$NEW_PR_TITLE"
-        # env:
-        #   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   semantic-pull-request:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
