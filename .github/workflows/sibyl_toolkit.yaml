@@ -26,11 +26,7 @@ jobs:
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-      - name: Set up gh CLI
-        uses: actions/setup-gh-cli@v1
-        with:
-          version: latest
+        uses: actions/checkout@v3
       - name: Format PR title
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
