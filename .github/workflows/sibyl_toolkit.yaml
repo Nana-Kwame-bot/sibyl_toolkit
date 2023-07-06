@@ -33,7 +33,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const context = JSON.parse('{{ toJson github }}');
             const prTitle = context.payload.pull_request.title;
             const newTitle = `chore: ${prTitle}`;
             await github.pulls.update({
