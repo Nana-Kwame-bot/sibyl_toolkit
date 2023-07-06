@@ -23,17 +23,19 @@ on:
 jobs:
   format:
     runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
+    if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
-      - name: Rewrite PR Title
-        uses: actions/github-script@v5
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            const { owner, repo, number: pull_number } = context.issue;
-            const { data: pull_request } = await github.pulls.get({ owner, repo, pull_number });
-            const title = pull_request.title.replace(/^Bump/, 'chore: Bump');
-            await github.pulls.update({ owner, repo, pull_number, title });
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Format PR title
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          NEW_PR_TITLE=$(echo $PR_TITLE | sed -e 's/^/chore: /')
+          echo "New PR title: $NEW_PR_TITLE"
+          gh pr edit "$PR_NUMBER" --title "$NEW_PR_TITLE"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   semantic-pull-request:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
