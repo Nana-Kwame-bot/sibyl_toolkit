@@ -23,6 +23,7 @@ on:
 jobs:
   format:
     runs-on: ubuntu-latest
+    permissions: write-all
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - name: Check out code
