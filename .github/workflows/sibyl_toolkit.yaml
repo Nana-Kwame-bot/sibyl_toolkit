@@ -21,26 +21,8 @@ on:
       - "pubspec.yaml"
 
 jobs:
-  format-pr:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Add chore prefix to PR title
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const newTitle = `chore: ${context.payload.pull_request.title}`;
-            await github.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number,
-              title: newTitle
-            });
-
   semantic-pull-request:
+    if: github.actor != 'dependabot[bot]'
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
 
   build:
