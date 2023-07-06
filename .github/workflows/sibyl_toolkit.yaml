@@ -21,6 +21,22 @@ on:
       - "pubspec.yaml"
 
 jobs:
+  format:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Format PR title
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          NEW_PR_TITLE=$(echo $PR_TITLE | sed -e 's/^/chore: /')
+          echo "New PR title: $NEW_PR_TITLE"
+          gh pr edit "$PR_NUMBER" --title "$NEW_PR_TITLE"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   semantic-pull-request:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
 
