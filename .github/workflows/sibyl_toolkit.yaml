@@ -14,7 +14,6 @@ on:
   push:
     branches:
       - main
-      - 'dependabot/**''
     paths:
       - ".github/workflows/sibyl_toolkit.yaml"
       - "lib/**"
@@ -22,23 +21,24 @@ on:
       - "pubspec.yaml"
 
 jobs:
-  format:
-    permissions: write-all
+  format-pr:
     runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Format PR title
-        run: |
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          NEW_PR_TITLE=$(echo $PR_TITLE | sed -e 's/^/chore: /')
-          echo "New PR title: $NEW_PR_TITLE"
-          gh pr edit "$PR_NUMBER" --title "$NEW_PR_TITLE"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Add chore prefix to PR title
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const newTitle = `chore: ${context.payload.pull_request.title}`;
+            await github.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              title: newTitle
+            });
 
   semantic-pull-request:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
