@@ -36,7 +36,7 @@ jobs:
           echo "New PR title: $NEW_PR_TITLE"
           gh pr edit "$PR_NUMBER" --title "$NEW_PR_TITLE"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   semantic-pull-request:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
